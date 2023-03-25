@@ -1,0 +1,118 @@
+
+
+
+import telebot
+import datetime
+from telebot import types
+from datetime import timedelta
+
+
+
+
+token = '6172015150:AAFVM3O8bkuBHzLdczvazwVDb6Vww_XOmb4'
+bot = telebot.TeleBot(token)
+
+@bot.message_handler(commands = ['start'])
+def hello(message):
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard = True, one_time_keyboard = False) #подгоняется автоматически по высоте
+    keyboard.add(types.KeyboardButton('Расписание занятий'), types.KeyboardButton('Часы работы учебного отдела'))
+    keyboard.add(types.KeyboardButton('Имена преподавателей'))
+    bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}!', reply_markup=keyboard)
+
+@bot.message_handler(content_types = ['text'])
+def main_menu(message):
+    if message.text == 'Расписание занятий':
+      #  bot.send_message(message.chat.id, f'Привет {message.from_user.first_name}!', reply_markup=keyboard)
+        inlineKeyboard = types.InlineKeyboardMarkup()
+        inlineKeyboard.add(types.InlineKeyboardButton('Расписание на сегодня', callback_data = 'сегодня'))
+        inlineKeyboard.add(types.InlineKeyboardButton('Расписание на понедельник', callback_data = 'понедельник'))
+        inlineKeyboard.add(types.InlineKeyboardButton('Расписание на вторник', callback_data = 'вторник'))
+        inlineKeyboard.add(types.InlineKeyboardButton('Расписание на среду', callback_data = 'среда'))
+        inlineKeyboard.add(types.InlineKeyboardButton('Расписание на четверг', callback_data = 'четверг'))
+        inlineKeyboard.add(types.InlineKeyboardButton('Расписание на пятницу', callback_data = 'пятница'))
+        bot.send_message(message.chat.id, 'Выберите день:', reply_markup=inlineKeyboard)
+    if message.text == 'Часы работы учебного отдела':
+        inlineKeyboard = types.InlineKeyboardMarkup()
+        inlineKeyboard.add(types.InlineKeyboardButton('Попеленский Михаил Юрьевич', callback_data = 'МЮ'))
+        inlineKeyboard.add(types.InlineKeyboardButton('Тотрова Марина Михайловна (инспектор)', callback_data = 'инспектор'))
+        inlineKeyboard.add(types.InlineKeyboardButton('Курочкина Анастасия Игоревна (диспетчер)', callback_data = 'диспетчер'))
+        bot.send_message(message.chat.id, 'Выберите сотрудника', reply_markup=inlineKeyboard)
+    if message.text == 'Имена преподавателей':
+        inlineKeyboard = types.InlineKeyboardMarkup()
+        inlineKeyboard.add(types.InlineKeyboardButton('Мат проблемы экономики', callback_data = 'Никонов'))
+        inlineKeyboard.add(types.InlineKeyboardButton('Эконометрика', callback_data = 'Ряднова'))
+        inlineKeyboard.add(types.InlineKeyboardButton('Теория чисел', callback_data = 'ТЧ'))
+        inlineKeyboard.add(types.InlineKeyboardButton('Численные методы и практикум на ЭВМ', callback_data = 'Корнев'))
+        inlineKeyboard.add(types.InlineKeyboardButton('Аналитическая механика', callback_data = 'анмех'))
+        inlineKeyboard.add(types.InlineKeyboardButton('История', callback_data = 'Ткаченко'))
+        bot.send_message(message.chat.id, 'По какому предмету?', reply_markup=inlineKeyboard)
+
+
+@bot.callback_query_handler(func = lambda call: True) #проверка, что кнопку нажали
+def getAnswer(call):
+    if call.data == 'Никонов':
+        bot.send_message(call.message.chat.id, 'Игорь Михайлович Никонов')
+    if call.data == 'Ряднова':
+        bot.send_message(call.message.chat.id, 'Екатерина Михайловна Ряднова')
+    if call.data == 'ТЧ':
+        bot.send_message(call.message.chat.id, 'Татьяна Анатольевна Преображенская')
+    if call.data == 'Корнев':
+        bot.send_message(call.message.chat.id, 'Андрей Алексеевич Корнев')
+    if call.data == 'анмех':
+        bot.send_message(call.message.chat.id, 'лектор: Олег Эдуардович Зубелевич\nсеминаристка: Мария Алексеевна Салмина')
+    if call.data == 'Ткаченко':
+        bot.send_message(call.message.chat.id, 'Елена Николаевна Ткаченко')
+
+    if call.data == 'МЮ':
+        bot.send_message(call.message.chat.id, 'e-mail: michael.popelensky@math.msu.ru\nТелефон: +7 (495) 939-32-11\nЧасы приема: пн 17:00 - 19:00')
+    if call.data == 'инспектор':
+        bot.send_message(call.message.chat.id, 'e-mail: marina.totrova@math.msu.ru\nтелефон: +7 (495) 939-37-28\nкабинет: 1506\nЧасы приема :пн 11:00 - 13:00 и 14:00 - 16:00\nср 11:00 - 13:00 и 14:00 - 16:00')
+    if call.data == 'диспетчер':
+        bot.send_message(call.message.chat.id, 'e-mail: anastasia.kurochkina@math.msu.ru\nтелефон: +7 (495) 939-39-29\nкабинет: 1326')
+    if call.data == 'вторник':
+        bot.send_message(call.message.chat.id, 'Мат проблемы экономики (плавающая), корпус: 2ГУМ, ауд. 424\nМат проблемы экономики, корпус: 2ГУМ, ауд. 424\nЭконометрика, корпус: 2ГУМ, ауд. 424')
+    if call.data == 'понедельник':
+        bot.send_message(call.message.chat.id, 'Занятия военной кафедры')
+    if call.data == 'среда':
+        bot.send_message(call.message.chat.id, 'Теоретико-числовые методы и алгоритмы, лекция, корпус: ГЗ, ауд. 1224\nТеоретико-числовые методы и алгоритмы, семинар, корпус: ГЗ, ауд. 1224\nАналитическая механика, лекция, корпус: ГЗ, ауд. 1408')
+    if call.data == 'четверг':
+        bot.send_message(call.message.chat.id, 'Аналитическая механика, семинар, корпус: ГЗ, ауд.1311\nФизкультура\nЧисленные методы, лекция, корпус: ГЗ, ауд. 1208\nЧисленные методы, семинар, корпус: ГЗ, ауд. 1208')
+    if call.data == 'пятница':
+        bot.send_message(call.message.chat.id, 'Первой пары нет.\nИстория (плавающая), корпус: ГЗ, ауд. 1414\nИстория, корпус: ГЗ, ауд.1414\nПрактикум на ЭВМ, корпус: ГЗ, ауд. 1307')
+    if call.data == 'сегодня':
+        dt = datetime.datetime.now(datetime.timezone.utc)
+        result = dt +timedelta(hours = 3)
+        week = int(result.isocalendar()[1])
+        day = int(result.isocalendar()[2])
+
+        if week%2 == 0:
+            chet = 1
+        else:
+            chet = 0
+        if day == 1:
+            bot.send_message(call.message.chat.id, 'Занятия военной кафедры')
+        elif (day == 2 and chet):
+            bot.send_message(call.message.chat.id, 'Нет первой пары\nМат проблемы экономики, корпус: 2ГУМ, ауд. 424\nЭконометрика, корпус: 2ГУМ, ауд. 424')
+        elif (day == 2 and not chet):
+            bot.send_message(call.message.chat.id, 'Мат проблемы экономики, корпус: 2ГУМ, ауд. 424\nМат проблемы экономики, корпус: 2ГУМ, ауд. 424\nЭконометрика, корпус: 2ГУМ, ауд. 424')
+        elif day == 3:
+            bot.send_message(call.message.chat.id, 'Теоретико-числовые методы и алгоритмы, лекция, корпус: ГЗ, ауд. 1224\nТеоретико-числовые методы и алгоритмы, семинар, корпус: ГЗ, ауд. 1224\nАналитическая механика, лекция, корпус: ГЗ, ауд. 1408')
+        elif day == 4:
+            bot.send_message(call.message.chat.id, 'Аналитическая механика, семинар, корпус: ГЗ, ауд.1311\nФизкультура\nЧисленные методы, лекция, корпус: ГЗ, ауд. 1208\nЧисленные методы, семинар, корпус: ГЗ, ауд. 1208')
+        elif (day == 5 and chet):
+            bot.send_message(call.message.chat.id, 'Первой пары нет\nИстория, корпус: ГЗ, ауд. 1414\nИстория, корпус: ГЗ, ауд.1414\nПрактикум на ЭВМ, корпус: ГЗ, ауд. 1307')
+        elif (day == 5 and not chet):
+            bot.send_message(call.message.chat.id, 'Первой пары нет\nВторой пары нет\nИстория, корпус: ГЗ, ауд.1414\nПрактикум на ЭВМ, корпус: ГЗ, ауд. 1307')
+        elif day == 6:
+            bot.send_message(call.message.chat.id, 'В субботу нет пар')
+        elif day == 0:
+            bot.send_message(call.message.chat.id, 'В воскресенье нет пар')
+
+
+bot.polling(none_stop = True)
+
+
+
+
+
+
