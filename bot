@@ -9,7 +9,7 @@ from datetime import timedelta
 
 
 
-token = '6172015150:AAFVM3O8bkuBHzLdczvazwVDb6Vww_XOmb4'
+token = ''
 bot = telebot.TeleBot(token)
 
 @bot.message_handler(commands = ['start'])
